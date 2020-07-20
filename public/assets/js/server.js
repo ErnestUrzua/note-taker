@@ -2,7 +2,7 @@
 // DEPENDENCIES
 var express = require("express");
 var path = require("path");
-var NotesDb = require("../../../db/db.json");
+var NotesDb = require("../../db/db.json");
 
 // EXPRESS CONFIGURATION
 // Tells node that we are creating an "express" server
@@ -16,10 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
-// LISTENER
-app.listen(PORT, function () {
-  console.log("App listening on PORT: " + PORT);
-});
+
 
 // Declaring a counter to keep track of the current ID for new notes
 var idCounter = 0;
@@ -34,10 +31,9 @@ app.get("*", function (req, res) {
   res.sendFile(path.join(__dirname, "../../../public/index.html"));
 });
 
-// API GET Requests
-//works on returning the JSON
+// API GET Requests-------------------------------------------------------------------
 app.get("/api/notes", function (req, res) {
-  res.json(NotesDb);
+  return res.json(NotesDb);
 });
 
 //API Delete 
@@ -59,6 +55,11 @@ app.post("/api/notes", function (req, res) {
 
 });
 
+
+// LISTENER
+app.listen(PORT, function () {
+    console.log("App listening on PORT: " + PORT);
+  });
 
 
 
