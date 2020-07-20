@@ -52,9 +52,17 @@ app.delete("/api/notes/:id", function (req, res) {
 
 
 // API POST Requests
+//Should recieve a new note to save on the request body, 
+//add it to the `db.json` file, and then return the new note to the client.
 app.post("/api/notes", function (req, res) {
+
     NotesDb.push(req.body);
-    res.json(NotesDb);
+
+    fs.readFile(NotesDb, "utf8", (err, data) => {
+        if (err) throw err;
+        var notes = JSON.parse(data);
+    })
+    return res.json(notes);
 
 });
 
