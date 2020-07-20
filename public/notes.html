@@ -39,4 +39,43 @@
   <script src="/assets/js/index.js"></script>
 </body>
 
+
+<script type="text/javascript">
+
+  // In this code, jQuery is used to "download" the data from our server
+  // We then dynamically display this content in our table. This is very similar to the group projects you just completed.
+  // It's also very similar to the NYT search application. In fact, I copied a ton of code from there.
+
+  //get the notes from db.JSON
+  function runDbQuery() {
+    // The AJAX function uses the URL of our API to GET the data associated with it (initially set to localhost)
+    $.ajax({ url: "/api/notes", method: "GET" })
+      .then(function(data) {
+
+        // Here we then log the data to console, where it will show up as an object.
+        console.log(data);
+        console.log("------------------------------------");
+
+        // Loop through and display each of the notes
+        for (var i = 0; i < data.length; i++) {
+
+          // Get a reference to the tableList element and populate it with tables
+          var noteTitle = $(".note-title");
+          var noteText = $(".note-text-area");
+
+          //append the data to the area
+          noteTitle.append(data[i].title);
+          noteTitle.append(data[i].text);
+         
+        }
+      });
+  }
+
+
+  // Run Queries!
+  // ==========================================
+  runDbQuery();
+
+
+</script>
 </html>
