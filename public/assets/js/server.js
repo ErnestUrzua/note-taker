@@ -2,8 +2,9 @@
 // DEPENDENCIES
 var express = require("express");
 var path = require("path");
-var NotesDb = require("../../db/db.json");
+var NotesDb = "../../db/db.json";
 var fs = require("fs");
+
 
 
 // EXPRESS CONFIGURATION
@@ -16,8 +17,8 @@ var PORT = process.env.PORT || 3000;
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static('public'));
-
+//app.use(express.static('../../../public'));
+app.use(express.static(path.join(__dirname,'../../../public')))
 
 
 // Declaring a counter to keep track of the current ID for new notes
@@ -29,25 +30,25 @@ app.get("/notes", function (req, res) {
     res.sendFile(path.join(__dirname, "../../../public/notes.html"));
 });
 
-// If no matching route is found default to index
-app.get("*", function (req, res) {
-    res.sendFile(path.join(__dirname, "../../../public/index.html"));
-});
+
 
 // API GET Requests-------------------------------------------------------------------
 //gets json.db and returns as text data
 app.get("/api/notes", function (req, res) {
+    console.log('Hello from the api notes route')
     fs.readFile(NotesDb, "utf8", (err, data) => {
         if (err) throw err;
         var notes = JSON.parse(data);
+        return res.json(notes)
     })
-    return res.json(notes);
+    
 });
 
 //API Delete 
 app.delete("/api/notes/:id", function (req, res) {
-    res.send(req.params)
-    res.json(NotesDb);
+   
+
+    //ONE RESPONSE
 });
 
 
@@ -56,7 +57,17 @@ app.delete("/api/notes/:id", function (req, res) {
 //add it to the `db.json` file, and then return the new note to the client.
 app.post("/api/notes", function (req, res) {
 
-    NotesDb.push(req.body);
+    // var newNote = {}
+    // newNote.id = idCounter
+    // newNote.text = req.body.text
+    // newNote.title = req.body.title
+
+    // var notesDb = fs.readFilea-->)
+    // NotesDb.push(newNote);
+
+    // idCounter++
+
+    // savefile
 
     fs.readFile(NotesDb, "utf8", (err, data) => {
         if (err) throw err;
@@ -66,6 +77,10 @@ app.post("/api/notes", function (req, res) {
 
 });
 
+// If no matching route is found default to index
+app.get("*", function (req, res) {
+    res.sendFile(path.join(__dirname, "../../../public/index.html"));
+});
 
 // LISTENER
 app.listen(PORT, function () {
