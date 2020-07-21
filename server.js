@@ -2,7 +2,7 @@
 // DEPENDENCIES
 var express = require("express");
 var path = require("path");
-var NotesDb = "../../db/db.json";
+var NotesDb = "public/db/db.json";
 var fs = require("fs");
 
 
@@ -18,7 +18,7 @@ var PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 //app.use(express.static('../../../public'));
-app.use(express.static(path.join(__dirname, '../../../public')))
+app.use(express.static(path.join(__dirname, 'public')))
 
 
 // Declaring a counter to keep track of the current ID for new notes
@@ -27,7 +27,7 @@ var idCounter = 0;
 
 // HTML GET Requests-------------------------------------------------------------------
 app.get("/notes", function (req, res) {
-    res.sendFile(path.join(__dirname, "../../../public/notes.html"));
+    res.sendFile(path.join(__dirname, "public/notes.html"));
 });
 
 
@@ -90,7 +90,7 @@ app.post("/api/notes", function (req, res) {
 
 // If no matching route is found default to index
 app.get("*", function (req, res) {
-    res.sendFile(path.join(__dirname, "../../../public/index.html"));
+    res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
 // LISTENER
