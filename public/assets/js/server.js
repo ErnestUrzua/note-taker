@@ -48,9 +48,18 @@ app.get("/api/notes", function (req, res) {
 
 //API Delete 
 app.delete("/api/notes/:id", function (req, res) {
+    
+    fs.readFile(NotesDb, "utf8", (err, data) => {
+        if (err) throw err;
+        var notes = JSON.parse(data);
+        console.log("retriving notes from db")
+        console.log(notes)
+        id = req.body.id; //get current id for note
+        delete notes.id.title.text //delete the notes id property
+        return res.json(notes)
+    })
 
 
-    //ONE RESPONSE
 });
 
 
@@ -68,7 +77,7 @@ app.post("/api/notes", function (req, res) {
 
     idCounter++;//increment the count of posts
 
-    var newNote = {id:idCounter, title: req.body.title,text: req.body.text}
+    var newNote = { id: idCounter, title: req.body.title, text: req.body.text }
     console.log("app.post newNote");
     console.log(newNote);
 
