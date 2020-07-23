@@ -67,25 +67,26 @@ app.delete("/api/notes/:id", function (req, res) {
 //Should recieve a new note to save on the request body, 
 //add it to the `db.json` file, and then return the new note to the client.
 app.post("/api/notes", function (req, res) {
+    var newNote = { id: idCounter, title: req.body.title, text: req.body.text }
     console.log("app.post reached");
     fs.readFile(NotesDb, "utf8", (err, data) => {
         if (err) throw err;
-        var notes = JSON.parse(data);
-        console.log("retriving notes from db")
-        console.log(notes)
-    })
+        var notes = JSON.parse(data)
+        console.log(`notes before -->`, notes)
+        notes.push(newNote)
+        console.log(`notes after -->`, notes)
+        notes = JSON.stringify(notes);
+        fs.writeFile(NotesDb, notes, (err) => {
+            if (err) throw err;
+            console.log('Notes written to DB');
+          });
+          
+        return NotesDb;
 
+    })
+   
     idCounter++;//increment the count of posts
 
-    var newNote = { id: idCounter, title: req.body.title, text: req.body.text }
-    console.log("app.post newNote");
-    console.log(newNote);
-
-    //stringfy object to send over to server
-    var notes = JSON.stringify(newNote);
-    NotesDb.push(notes);//push into db
-    // savefile and return the json object
-    return res.json(NotesDb);
 });
 
 // If no matching route is found default to index
