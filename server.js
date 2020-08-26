@@ -2,9 +2,8 @@
 // DEPENDENCIES
 var express = require("express");
 var path = require("path");
-var NotesDb = "public/db/db.json";
+var NotesDb = "./db/db.json";
 var fs = require("fs");
-
 
 
 // EXPRESS CONFIGURATION
@@ -35,30 +34,35 @@ app.get("/notes", function (req, res) {
 // API GET Requests-------------------------------------------------------------------
 //gets json.db and returns as text data
 app.get("/api/notes", function (req, res) {
-    console.log('called api/notes')
+   
     fs.readFile(NotesDb, "utf8", (err, data) => {
         if (err) throw err;
         var notes = JSON.parse(data);
-        console.log("retriving notes from db")
+        console.log("getting notes from db")
         console.log(notes)
-        return res.json(notes)
+        res.json(notes)
     })
 
 });
 
 //API Delete 
 app.delete("/api/notes/:id", function (req, res) {
-    
+
     fs.readFile(NotesDb, "utf8", (err, data) => {
         if (err) throw err;
         var notes = JSON.parse(data);
-        console.log("retriving notes from db")
-        console.log(notes)
-        id = req.body.id; //get current id for note
-        delete notes.id.title.text //delete the notes id property
-        return res.json(notes)
-    })
+        console.log("getting notes from db")
+        id = req.params.id; //get current title for note
 
+        var filteredNotes = notes.filter(note => note.id != id) //delete the notes id property
+
+        fs.writeFile(NotesDb, JSON.stringify(filteredNotes,null, 2), (err) => {
+            if (err) throw err;
+            res.json(filteredNotes);
+            console.log('Deleted Note ', id);
+
+          });
+    })
 
 });
 
@@ -67,26 +71,22 @@ app.delete("/api/notes/:id", function (req, res) {
 //Should recieve a new note to save on the request body, 
 //add it to the `db.json` file, and then return the new note to the client.
 app.post("/api/notes", function (req, res) {
-    var newNote = { id: idCounter, title: req.body.title, text: req.body.text }
-    console.log("app.post reached");
+    console.log("posting a new note");
+    var id = idCounter++;
+    const newNote = req.body;
+    newNote.id = id;
+
     fs.readFile(NotesDb, "utf8", (err, data) => {
         if (err) throw err;
         var notes = JSON.parse(data)
-        console.log(`notes before -->`, notes)
-        notes.push(newNote)
-        console.log(`notes after -->`, notes)
+        notes.push(newNote);
         notes = JSON.stringify(notes);
         fs.writeFile(NotesDb, notes, (err) => {
             if (err) throw err;
+            res.json({ success: true, msg: 'Created new note' });
             console.log('Notes written to DB');
-          });
-          
-        return NotesDb;
-
-    })
-   
-    idCounter++;//increment the count of posts
-
+        });
+    })      
 });
 
 // If no matching route is found default to index
